@@ -8,13 +8,21 @@ class ScrapesController < ApplicationController
   def create
     @scrape = Scrape.new(scrape_params)
     if @scrape.save
-      # io     = open("#{@scrape.url}")
-      io = open(@scrape.url)
-      reader = PDF::Reader.new(io)
-      puts reader.info
+      redirect_to scrape_path(@scrape)
+    else
+      render "new"
+    end
   end
 
   def show
+    @scrape = Scrape.find(params[:id])
+    require 'pdf/reader'
+    reader = PDF::Reader.new('@scrape.pdf')
+
+    reader.pages.each do |page|
+    pattern = /[\n\r].*Cha-Cha\s*([^\n\r]*)/
+    match_data = page.text.match(pattern)
+    puts match_data
 
   end
 
